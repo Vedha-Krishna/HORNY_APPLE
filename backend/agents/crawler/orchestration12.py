@@ -501,25 +501,38 @@ action={state.get("action_text")}
 retry_count={state.get("retry_count")}
 
 Decision rules:
-- Publish if it is a concrete Singapore crime, scam, public safety, or disorder incident with believable details.
-- Publish ordinary community reports if they have coherent location and action, even without police/media confirmation.
+Decision rules:
 
-- Reject if it is clearly general news, political/legal/business commentary, trend discussion, or not a concrete local incident.
-- Reject overseas incidents unless they directly affect Singapore public safety.
-- Reject if the classifier category is "other" and the reasoning clearly says it is not a crime/public-safety incident.
+Publish ONLY if the post describes a concrete Singapore incident with at least TWO of:
+- clear offence/safety action
+- clear target/victim/object
+- clear Singapore location
+- clear time/context
+- credible risk to public safety, property, or personal safety
 
-- Use needs_retry when the post may be relevant but the classifier output seems questionable.
-- Use needs_retry if the category seems wrong but the post still describes a possible local incident.
-- Use needs_retry if authenticity is low or medium because location/time/action details may have been missed.
-- Use needs_retry if severity seems overestimated or underestimated.
-- Use needs_retry once before rejecting borderline crime, scam, disorder, harassment, assault, theft, suspicious activity, or public-safety reports.
+Publish if it is a concrete local report involving:
+- theft, scam/fraud, assault, harassment/threat, sexual offence, drug offence, weapon/firearm risk, suspicious activity with clear risky action, or public disorder with specific details.
 
-- If category seems wrong, return instruction "wrong_category".
-- If important details may have been missed, return instruction "improve_evidence".
-- If the classifier seems correct and no retry is needed, return instruction "no_retry".
+Reject if it is:
+- general news, political/legal/business commentary, corporate updates, celebrity/family drama, trend discussion, or viral content
+- a regulatory/business/legal article without direct public-safety risk
+- a lost item report without evidence of theft, scam, or suspicious activity
+- an overseas incident without direct Singapore public-safety relevance
+- vague suspicion with no clear action, target, victim, threat, or attempted offence
+- merely “someone looked suspicious” without concrete behaviour
 
-- Do not reject a concrete assault, scam, theft, sexual offence, harassment, or public-safety report just because one extracted field is missing.
+For suspicious_activity:
+- Publish only if there is a concrete risky behaviour, such as checking car doors, following/stalking someone, carrying a weapon, soliciting money deceptively, trespassing, or attempting to access property.
+- Reject vague suspicious feelings without a concrete action.
 
+For regulatory_offence:
+- Publish only if it involves direct public safety, serious enforcement action, or risk to people.
+- Reject ordinary business/legal/regulatory news that is not useful as a community safety alert.
+
+Retry rules:
+- Use needs_retry only if the post is probably relevant but the classifier made a clear mistake.
+- Do not use repeated retries for vague posts.
+- If details are still vague after one retry, reject.
 Return ONLY JSON:
 {{
   "decision": "publish | needs_retry | reject",
