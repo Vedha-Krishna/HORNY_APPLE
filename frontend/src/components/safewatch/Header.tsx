@@ -18,6 +18,7 @@ const TIME_OPTIONS: { value: TimeRangeFilter; label: string }[] = [
   { value: "7d", label: "7d" },
   { value: "30d", label: "30d" },
   { value: "90d", label: "90d" },
+  { value: "all", label: "All" },
 ];
 
 export default function Header() {
@@ -98,7 +99,7 @@ export default function Header() {
           />
         </div>
         <span className="w-px h-4 bg-white/10 shrink-0" />
-        <div className="grid grid-cols-4 shrink-0 gap-0.5">
+        <div className="grid grid-cols-5 shrink-0 gap-0.5">
           {TIME_OPTIONS.map((opt) => (
             <button
               key={opt.value}

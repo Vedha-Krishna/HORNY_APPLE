@@ -990,7 +990,7 @@ Single source of truth for all UI state.
 | `incidents` | `Incident[]` | Current incident list (starts as mock data) |
 | `selectedIncidentId` | `string?` | Which incident is open in the detail panel |
 | `crimeType` | `CrimeTypeFilter` | Active crime type filter |
-| `timeRange` | `TimeRangeFilter` | `24h`, `7d`, `30d`, or `90d` |
+| `timeRange` | `TimeRangeFilter` | `24h`, `7d`, `30d`, `90d`, or `all` |
 | `severityFilter` | `SeverityFilter` | Severity display mode |
 | `mapFlyTo` | `object?` | Coords to animate the map to |
 | `sidebarCollapsed` | `bool` | Sidebar open or closed |

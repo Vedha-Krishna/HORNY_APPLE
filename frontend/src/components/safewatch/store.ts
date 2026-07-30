@@ -368,7 +368,7 @@ function rowToAgentLog(r: DbRow): AgentLog {
 // Zustand store
 export type CrimeTypeFilter = "all" | (string & {});
 
-export type TimeRangeFilter = "24h" | "7d" | "30d" | "90d";
+export type TimeRangeFilter = "24h" | "7d" | "30d" | "90d" | "all";
 export type SeverityFilter = "all" | "critical_only" | "no_location";
 
 interface SafeWatchState {
@@ -407,7 +407,7 @@ export const useStore = create<SafeWatchState>((set) => ({
   selectedIncidentId: null,
   selectedClusterId:  null,
   crimeType:          "all",
-  timeRange:          "7d",
+  timeRange:          "all",
   severityFilter:     "all",
   mapFlyTo:           null,
   isLoading:          false,
@@ -507,7 +507,7 @@ export const useStore = create<SafeWatchState>((set) => ({
 }));
 
 // Derived selectors
-const TIME_RANGE_HOURS: Record<TimeRangeFilter, number> = {
+const TIME_RANGE_HOURS: Record<Exclude<TimeRangeFilter, "all">, number> = {
   "24h": 24,
   "7d":  24 * 7,
   "30d": 24 * 30,
@@ -524,9 +524,14 @@ export function useFilteredIncidents(): Incident[] {
   }, []);
 
   return useMemo(() => {
-    const cutoff = now - TIME_RANGE_HOURS[timeRange] * 3600 * 1000;
+    const cutoff =
+      timeRange === "all"
+        ? null
+        : now - TIME_RANGE_HOURS[timeRange] * 3600 * 1000;
+
     return incidents.filter((i) => {
       if (crimeType !== "all" && i.type !== crimeType) return false;
+      if (cutoff === null) return true;
       const postedAt = new Date(i.timestamp).getTime();
       if (Number.isNaN(postedAt)) return true;
       return postedAt >= cutoff;
